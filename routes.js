@@ -25,3 +25,5 @@ router
   .delete(function (req, res) {
     return patientController.delete(req, res)
   })
+
+module.exports = router

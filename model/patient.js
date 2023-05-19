@@ -1,12 +1,13 @@
 const Sequelize = require("sequelize");
-const db = require("../config/connect");
+const sequelize = require("../config/connect");
 
-// Creating a table in database
-const Patient = db.define("patient", {
+// Creating a table in the database
+const Patient = sequelize.define("patients", {
   id: {
     type: Sequelize.INTEGER,
-    primaryKey: true,
     autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
   },
   name: {
     type: Sequelize.STRING,
@@ -31,7 +32,6 @@ const Patient = db.define("patient", {
   email: {
     type: Sequelize.STRING,
     allowNull: false,
-    unique: true,
     validate: {
       isEmail: true,
     },
@@ -42,10 +42,8 @@ const Patient = db.define("patient", {
   },
 });
 
-db
-  // Will only create the table if it doesn't already exist in the database
-  .sync({ force: false })
-  .then(() => console.log("Tabela people criado com sucesso!"))
-  .catch((error) => console.log("Erro ao criar tabela person:", error));
+sequelize.sync()
+  .then(() => console.log("Table 'patient' created successfully!"))
+  .catch((error) => console.log("Error creating 'patient' table:", error));
 
 module.exports = Patient;

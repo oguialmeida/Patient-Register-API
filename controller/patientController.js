@@ -9,30 +9,32 @@ exports.list = async (_, res) => {
     .catch((error) => console.error(error));
 };
 
-// Function to save users
 exports.save = async (req, res) => {
-  const {
-    id,
-    name,
-    dateOfBirth,
-    gender,
-    address,
-    phoneNumber,
-    email,
-    medicalHistory,
-  } = req.body;
-
-  Patient.create({
-    id,
-    name,
-    dateOfBirth,
-    gender,
-    address,
-    phoneNumber,
-    email,
-    medicalHistory,
-  }).then((post) => res.send(post));
-};
+    const {
+      name,
+      dateOfBirth,
+      gender,
+      address,
+      phoneNumber,
+      email,
+      medicalHistory,
+    } = req.body;
+  
+    Patient.create({
+      name,
+      dateOfBirth,
+      gender,
+      address,
+      phoneNumber,
+      email,
+      medicalHistory,
+    })
+      .then((post) => res.send(post))
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send({ message: "Internal Server Error" });
+      });
+  };  
 
 // Function to filter users
 exports.getById = async (req, res) => {
