@@ -2,15 +2,31 @@ const Patient = require("../model/patient");
 
 // Function to list users
 exports.list = async (_, res) => {
-  Patient.findAll({
-    order: [["id", "DESC"]],
-  })
-    .then((posts) => res.send(posts))
-    .catch((error) => console.error(error));
+  try {
+    const posts = await Patient.findAll({
+      order: [["id", "DESC"]],
+    });
+    res.send(posts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
 };
 
+// Function to save users
 exports.save = async (req, res) => {
-    const {
+  const {
+    name,
+    dateOfBirth,
+    gender,
+    address,
+    phoneNumber,
+    email,
+    medicalHistory,
+  } = req.body;
+
+  try {
+    const post = await Patient.create({
       name,
       dateOfBirth,
       gender,
@@ -18,23 +34,13 @@ exports.save = async (req, res) => {
       phoneNumber,
       email,
       medicalHistory,
-    } = req.body;
-  
-    Patient.create({
-      name,
-      dateOfBirth,
-      gender,
-      address,
-      phoneNumber,
-      email,
-      medicalHistory,
-    })
-      .then((post) => res.send(post))
-      .catch((error) => {
-        console.error(error);
-        res.status(500).send({ message: "Internal Server Error" });
-      });
-  };  
+    });
+    res.send(post);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+};
 
 // Function to filter users
 exports.getById = async (req, res) => {
@@ -43,7 +49,7 @@ exports.getById = async (req, res) => {
   try {
     const patient = await Patient.findByPk(id);
     if (!patient) {
-      return res.status(404).send({ message: "patient not found" });
+      return res.status(404).send({ message: "Patient not found" });
     }
     res.send(patient);
   } catch (error) {
@@ -59,10 +65,10 @@ exports.delete = async (req, res) => {
   try {
     const patient = await Patient.findByPk(id);
     if (!patient) {
-      return res.status(404).send({ message: "patient not found" });
+      return res.status(404).send({ message: "Patient not found" });
     }
     await patient.destroy();
-    res.send({ message: "patient deleted successfully" });
+    res.send({ message: "Patient deleted successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: "Internal Server Error" });
@@ -83,20 +89,20 @@ exports.update = async (req, res) => {
   } = req.body;
 
   try {
-    let patient = await Patient.findByPk(id);
+    const patient = await Patient.findByPk(id);
     if (!patient) {
       return res.status(404).send({ message: "Patient not found" });
     }
 
-    patient.name = name;
-    (patient.dateOfBirth = dateOfBirth),
-      (patient.gender = gender),
-      (patient.address = address),
-      (patient.phoneNumber = phoneNumber),
-      (patient.email = email),
-      (patient.medicalHistory = medicalHistory);
-
-    await patient.save();
+    await patient.update({
+      name,
+      dateOfBirth,
+      gender,
+      address,
+      phoneNumber,
+      email,
+      medicalHistory,
+    });
 
     res.send(patient);
   } catch (error) {

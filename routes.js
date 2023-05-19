@@ -15,7 +15,7 @@ router
   });
 
 router
-  .route("patient/:id")
+  .route("/patient/:id")
   .get(function (req, res) {
     return patientController.getById(req, res)
   })
